@@ -1,7 +1,5 @@
 import pygame
 
-
-direction = 'up'
 snake = [
     {'x': 5, 'y': 5},
     {'x': 5, 'y': 6},
@@ -14,8 +12,18 @@ WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Snake")
 
 
-def move():
+def check_for_collision():
+    # checks if snake head has collided with body
+    if snake.count((snake[0])) > 1:
+        return True
+    # checks if snake head has hit the wall
+    if snake[0]['x'] < 0 or snake[0]['y'] < 0 or snake[0]['x'] > 13 or snake[0]['y'] > 9:
+        return True
 
+    return False
+
+
+def move(direction):
     eat_fruit = False
 
     if not eat_fruit:
@@ -51,18 +59,38 @@ def draw():
 
 
 def main():
+    direction = 'up'
     clock = pygame.time.Clock()
-    pygame.time.set_timer(pygame.USEREVENT, 1000 - score)
+    pygame.time.set_timer(pygame.USEREVENT, 500 - score)
     running = True
     draw()
+
     while running:
-        clock.tick(60)
+        clock.tick(60)  # FPS
+        
         for event in pygame.event.get():
-            #print(event)
+            # print(event)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    direction = 'up'
+
+                if event.key == pygame.K_a:
+                    direction = 'left'
+
+                if event.key == pygame.K_s:
+                    direction = 'down'
+
+                if event.key == pygame.K_d:
+                    direction = 'right'
+
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.USEREVENT:
-                move()
+                move(direction)
+                has_collided = check_for_collision()
+                if has_collided:
+                    running = False
+
                 draw()
 
     pygame.quit()
