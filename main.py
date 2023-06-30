@@ -25,12 +25,23 @@ def draw(snake, food):
     pygame.draw.rect(WINDOW, colors["border_color"], (spacing, 0, HEIGHT, HEIGHT))
     pygame.draw.rect(WINDOW, colors["tile_color"], (spacing + tile_size, tile_size, board_size, board_size))
 
+    snake_image = pygame.image.load("assets/snake_body.png")
+    snake_image = pygame.transform.scale(snake_image, (tile_size, tile_size))
+
+    snake_head_image = pygame.image.load("assets/snake_head.png")
+    snake_head_image = pygame.transform.scale(snake_head_image, (tile_size, tile_size))
+ 
+    head_drawn = False
     for body in snake:
-        pygame.draw.rect(
-            WINDOW,
-            colors["snake_color"],
-            (spacing + tile_size + tile_size * body['x'], tile_size + tile_size * body['y'], tile_size, tile_size)
-        )
+        if not head_drawn:
+            draw_image(snake_head_image, spacing + tile_size * (body['x'] + 1), tile_size * (body['y'] + 1), tile_size,
+                       tile_size)
+
+            head_drawn = True
+            continue
+
+        draw_image(snake_image, spacing + tile_size * (body['x'] + 1), tile_size * (body['y'] + 1), tile_size,
+                   tile_size)
 
     pygame.draw.rect(
         WINDOW,
@@ -39,6 +50,19 @@ def draw(snake, food):
     )
 
     pygame.display.update()
+
+
+def draw_image(image, x, y, width, height):
+    rect = image.get_rect()
+    rect.update(x, y, width, height)
+    WINDOW.blit(image, (x, y, width, height))
+
+    pygame.draw.rect(
+        WINDOW,
+        colors["snake_color"],
+        rect,
+        1
+    )
 
 
 def check_for_collision(snake):
@@ -124,4 +148,5 @@ def main():
 
 
 if __name__ == '__main__':
+    pygame.init()
     main()
